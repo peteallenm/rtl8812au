@@ -332,6 +332,8 @@ static void _rtw_reg_apply_flags(struct wiphy *wiphy)
 				ch = &sband->channels[j];
 
 				if (ch)
+                {
+#ifndef CONFIG_PLATFORM_ARM_SUNxI
 					ch->flags &= ~(IEEE80211_CHAN_DISABLED|IEEE80211_CHAN_NO_HT40PLUS|
 						IEEE80211_CHAN_NO_HT40MINUS|IEEE80211_CHAN_NO_80MHZ|
 						IEEE80211_CHAN_NO_160MHZ);
@@ -340,7 +342,12 @@ static void _rtw_reg_apply_flags(struct wiphy *wiphy)
 #else
 						IEEE80211_CHAN_NO_IR;
 #endif
+#else // CONFIG_PLATFORM_ARM_SUNxI
+                        ch->flags &= ~(IEEE80211_CHAN_DISABLED|IEEE80211_CHAN_NO_HT40PLUS|
+						IEEE80211_CHAN_NO_HT40MINUS);
+#endif // CONFIG_PLATFORM_ARM_SUNxI
 						//ch->flags = IEEE80211_CHAN_DISABLED;
+                }
 			}
 		}
 	}

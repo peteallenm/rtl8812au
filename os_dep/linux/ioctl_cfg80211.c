@@ -4372,7 +4372,11 @@ static int cfg80211_rtw_del_virtual_intf(struct wiphy *wiphy,
 	/* unregister only monitor device
 	 * because only monitor can be added
 	 */
-	if(wdev->iftype == NL80211_IFTYPE_MONITOR)
+    #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 6, 0))
+    if(wdev->iftype == NL80211_IFTYPE_MONITOR)
+    #else
+	if(pwdev_priv->rtw_wdev && pwdev_priv->rtw_wdev->iftype == NL80211_IFTYPE_MONITOR)
+    #endif
 		unregister_netdevice(ndev);
 			pwdev_priv->pmon_ndev = NULL;
 			pwdev_priv->ifname_mon[0] = '\0';
@@ -4865,7 +4869,46 @@ static int	cfg80211_rtw_change_bss(struct wiphy *wiphy, struct net_device *ndev,
 	return 0;
 
 }
+#ifdef CONFIG_PLATFORM_ARM_SUNxI
+struct ieee80211_channel *cfg80211_rtw_get_channel(struct wiphy *wiphy)
+{
+  struct ieee80211_channel *ret_chan = NULL;
+_adapter *padapter= wiphy_to_adapter(wiphy);
+  int channel;
+  int control_freq;
+  int band;
 
+  HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(padapter);
+
+  if (channel >= 1) {
+    switch (pHalData->current_band_type) {
+      case 0:
+	band = NL80211_BAND_2GHZ;
+	break;
+      case 1:
+	band = NL80211_BAND_5GHZ;
+	break;
+      default:
+	return NULL;
+
+    }
+    control_freq =  ieee80211_channel_to_frequency(channel, band);
+
+    ret_chan = ieee80211_get_channel(wiphy, control_freq);
+      if (ret_chan == NULL) {
+	//RTW_INFO("%s chan null\n", __func__);
+	return NULL;
+    }
+    //RTW_INFO("%s : channel %d width %d freq1 %d freq2 %d center_freq %d offset %d\n", __func__, channel, width, chandef->center_freq1, chandef->center_freq2, chandef->chan->center_freq,rtw_get_oper_choffset(padapter));
+  } 
+  else 
+  {
+	return NULL;
+  }
+  return ret_chan;
+}
+
+#else
 static int cfg80211_rtw_get_channel(struct wiphy *wiphy, struct wireless_dev *wdev, struct cfg80211_chan_def *chandef){
   _adapter *padapter= wiphy_to_adapter(wiphy);
   int channel;
@@ -4985,6 +5028,7 @@ static int cfg80211_rtw_get_channel(struct wiphy *wiphy, struct wireless_dev *wd
   return 0;
 
 }
+#endif
 
 static int	cfg80211_rtw_set_channel(struct wiphy *wiphy
 	#if (CFG80211_API_LEVEL >= KERNEL_VERSION(2, 6, 35))
@@ -7318,7 +7362,6 @@ static void rtw_cfg80211_init_vht_capab(_adapter *padapter, struct ieee80211_sta
 
 	RTW_INFO("[VHT] Highest rate value: %d\n", HighestRate);
 }
-#endif //CONFIG_VHT_EXTRAS
 
 static void rtw_cfg80211_init_vht_capab_ex(_adapter *padapter, struct ieee80211_sta_vht_cap *vht_cap, u8 rf_type)
 {
@@ -7399,6 +7442,7 @@ static void rtw_cfg80211_init_vht_capab_ex(_adapter *padapter, struct ieee80211_
 
 	vht_cap->cap |= (pvhtpriv->ampdu_len << IEEE80211_VHT_CAP_MAX_A_MPDU_LENGTH_EXPONENT_SHIFT);
 }
+#endif //CONFIG_VHT_EXTRAS
 
 void rtw_cfg80211_init_wiphy(_adapter *padapter)
 {

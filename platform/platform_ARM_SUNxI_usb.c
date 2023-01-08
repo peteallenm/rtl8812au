@@ -48,6 +48,7 @@ int platform_wifi_power_on(void)
 	int ret = 0;
 
 #ifdef CONFIG_PLATFORM_ARM_SUNxI
+#if 0 // Not sure what this is doing, but it appears to be broken
 #ifndef CONFIG_RTL8723A
 	{
 		/* ----------get usb_wifi_usbc_num------------- */
@@ -61,6 +62,7 @@ int platform_wifi_power_on(void)
 		sw_usb_enable_hcd(usb_wifi_host);
 	}
 #endif /* CONFIG_RTL8723A */
+#endif
 #endif /* CONFIG_PLATFORM_ARM_SUNxI */
 
 #if defined(CONFIG_PLATFORM_ARM_SUN6I) || defined(CONFIG_PLATFORM_ARM_SUN7I)

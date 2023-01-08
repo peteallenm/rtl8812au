@@ -17,7 +17,7 @@ EXTRA_CFLAGS += -Wno-unused-label
 EXTRA_CFLAGS += -Wno-unused-parameter
 EXTRA_CFLAGS += -Wno-unused-function
 EXTRA_CFLAGS += -Wno-unused
-EXTRA_CFLAGS += -Wno-cast-function-type
+#EXTRA_CFLAGS += -Wno-cast-function-type
 EXTRA_CFLAGS += -Wno-date-time
 #EXTRA_CFLAGS += -Wno-misleading-indentation
 EXTRA_CFLAGS += -Wno-uninitialized
@@ -42,13 +42,13 @@ EXTRA_LDFLAGS += --strip-debug
 
 ########################## WIFI IC ############################
 CONFIG_RTL8812A = y
-CONFIG_RTL8821A = y
-CONFIG_RTL8814A = y
+CONFIG_RTL8821A = n
+CONFIG_RTL8814A = n
 ######################### Interface ###########################
 CONFIG_USB_HCI = y
 ########################## Features ###########################
 CONFIG_NET_NS = y
-CONFIG_MP_INCLUDED = y
+CONFIG_MP_INCLUDED = n
 CONFIG_POWER_SAVING = n
 CONFIG_USB_AUTOSUSPEND = n
 CONFIG_HW_PWRP_DETECTION = n
@@ -84,7 +84,7 @@ CONFIG_RTW_GRO = y
 CONFIG_RTW_IPCAM_APPLICATION = n
 CONFIG_RTW_REPEATER_SON = n
 CONFIG_RTW_WIFI_HAL = y
-CONFIG_VHT_EXTRAS = y
+CONFIG_VHT_EXTRAS = n
 CONFIG_LED_CONTROL = y
 CONFIG_LED_ENABLE = y
 CONFIG_USB2_EXTERNAL_POWER = y
@@ -94,7 +94,7 @@ CONFIG_USB2_EXTERNAL_POWER = y
 CONFIG_RTW_DEBUG = y
 # default log level is _DRV_INFO_ = 4,
 # please refer to "How_to_set_driver_debug_log_level.doc" to set the available level.
-CONFIG_RTW_LOG_LEVEL = 4 #Consti10 3==DRV_WARNING
+CONFIG_RTW_LOG_LEVEL = 3 #Consti10 3==DRV_WARNING
 ######################## Wake On Lan ##########################
 CONFIG_WOWLAN = n
 CONFIG_WAKEUP_TYPE = 0x7 #bit2: deauth, bit1: unicast, bit0: magic pkt.
@@ -109,7 +109,7 @@ CONFIG_RTW_SDIO_PM_KEEP_POWER = y
 ###################### MP HW TX MODE FOR VHT #######################
 CONFIG_MP_VHT_HW_TX_MODE = n
 ###################### Platform Related #######################
-CONFIG_PLATFORM_I386_PC = y
+CONFIG_PLATFORM_I386_PC = n
 CONFIG_PLATFORM_ARM_RPI = n
 CONFIG_PLATFORM_ARM64_RPI = n
 CONFIG_PLATFORM_ANDROID_X86 = n
@@ -146,7 +146,7 @@ CONFIG_PLATFORM_DMP_PHILIPS = n
 CONFIG_PLATFORM_MSTAR_TITANIA12 = n
 CONFIG_PLATFORM_MSTAR = n
 CONFIG_PLATFORM_SZEBOOK = n
-CONFIG_PLATFORM_ARM_SUNxI = n
+CONFIG_PLATFORM_ARM_SUNxI = y
 CONFIG_PLATFORM_ARM_SUN6I = n
 CONFIG_PLATFORM_ARM_SUN7I = n
 CONFIG_PLATFORM_ARM_SUN8I_W3P1 = n
@@ -1186,7 +1186,7 @@ ifeq ($(CONFIG_PLATFORM_ARM_SUNxI), y)
 EXTRA_CFLAGS += -DCONFIG_LITTLE_ENDIAN
 EXTRA_CFLAGS += -DCONFIG_PLATFORM_ARM_SUNxI
 # default setting for Android 4.1, 4.2
-EXTRA_CFLAGS += -DCONFIG_CONCURRENT_MODE
+#EXTRA_CFLAGS += -DCONFIG_CONCURRENT_MODE
 EXTRA_CFLAGS += -DCONFIG_IOCTL_CFG80211 -DRTW_USE_CFG80211_STA_EVENT
 
 EXTRA_CFLAGS += -DCONFIG_PLATFORM_OPS
@@ -1194,11 +1194,7 @@ ifeq ($(CONFIG_USB_HCI), y)
 EXTRA_CFLAGS += -DCONFIG_USE_USB_BUFFER_ALLOC_TX
 _PLATFORM_FILES += platform/platform_ARM_SUNxI_usb.o
 endif
-ifeq ($(CONFIG_SDIO_HCI), y)
-# default setting for A10-EVB mmc0
-#EXTRA_CFLAGS += -DCONFIG_WITS_EVB_V13
-_PLATFORM_FILES += platform/platform_ARM_SUNxI_sdio.o
-endif
+
 
 ARCH := arm
 #CROSS_COMPILE := arm-none-linux-gnueabi-
