@@ -5036,11 +5036,23 @@ static int	cfg80211_rtw_set_channel(struct wiphy *wiphy
 	#endif
 	, struct ieee80211_channel *chan, enum nl80211_channel_type channel_type)
 {
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 35))
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 6, 0))
 	_adapter *padapter = (_adapter *)rtw_netdev_priv(ndev);
 #else
+    if(wiphy == NULL)
+    {
+        RTW_INFO("cfg80211_rtw_set_channel() NULL wiphy\n"); 
+        return 0;
+    }
 	_adapter *padapter = wiphy_to_adapter(wiphy);
 #endif
+
+    if(chan == NULL)
+    {
+        RTW_INFO("cfg80211_rtw_set_channel() NULL chan\n"); 
+        return 0;
+    }
+    
 	int chan_target = (u8) ieee80211_frequency_to_channel(chan->center_freq);
 	int chan_offset = HAL_PRIME_CHNL_OFFSET_DONT_CARE;
 	int chan_width = CHANNEL_WIDTH_20;
